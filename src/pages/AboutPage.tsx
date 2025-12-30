@@ -1,8 +1,28 @@
 import { Card } from '../components/ui/card';
-import { Award, Globe, TrendingUp, Users, Shield, Leaf } from 'lucide-react';
-import { certifications, companyStats } from '../lib/mockData';
+import { Award, Globe, TrendingUp, Users, Shield, Leaf, Loader2 } from 'lucide-react';
+import { useLanguage } from '../lib/LanguageContext';
+import { useSiteSettings } from '../hooks/useSiteSettings';
+import { usePageContent } from '../hooks/usePageContent';
+import { PortableText } from '../components/PortableText';
+import { companyStats } from '../lib/mockData';
 
 export function AboutPage() {
+  const { language } = useLanguage();
+  const { t: siteT } = useSiteSettings(language);
+  const { content: pageT, loading } = usePageContent('about', language);
+
+  const t = { ...siteT, ...pageT };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 animate-spin text-[var(--citrus-orange)] mx-auto mb-4" />
+          <p className="text-lg" style={{ color: 'var(--gray-600)' }}>{t.loading}</p>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="min-h-screen bg-white">
       {/* Hero */}
@@ -16,9 +36,9 @@ export function AboutPage() {
       >
         <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-black/50" />
         <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">About Al Soadaa</h1>
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">{t.aboutAlSoadaa}</h1>
           <p className="text-xl md:text-2xl text-white/90">
-            Trusted Egyptian Exporter Since 2009
+            {t.aboutHeroSubtitle}
           </p>
         </div>
       </div>
@@ -31,55 +51,44 @@ export function AboutPage() {
               <div className="text-4xl font-bold mb-2" style={{ color: 'var(--citrus-orange)' }}>
                 {companyStats.yearsExporting}+
               </div>
-              <div style={{ color: 'var(--gray-700)' }}>Years of Excellence</div>
+              <div style={{ color: 'var(--gray-700)' }}>{t.yearsOfExcellence}</div>
             </div>
             <div className="text-center">
               <div className="text-4xl font-bold mb-2" style={{ color: 'var(--fresh-green)' }}>
                 {companyStats.countriesServed}+
               </div>
-              <div style={{ color: 'var(--gray-700)' }}>Countries Served</div>
+              <div style={{ color: 'var(--gray-700)' }}>{t.countriesServed}</div>
             </div>
             <div className="text-center">
               <div className="text-4xl font-bold mb-2" style={{ color: 'var(--trust-blue)' }}>
                 {companyStats.containersPerYear}+
               </div>
-              <div style={{ color: 'var(--gray-700)' }}>Containers Annually</div>
+              <div style={{ color: 'var(--gray-700)' }}>{t.containersAnnually}</div>
             </div>
             <div className="text-center">
               <div className="text-4xl font-bold mb-2" style={{ color: 'var(--grape-purple)' }}>
                 100%
               </div>
-              <div style={{ color: 'var(--gray-700)' }}>Customer Satisfaction</div>
+              <div style={{ color: 'var(--gray-700)' }}>{t.customerSatisfaction}</div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Our Story */}
-      <div className="py-16">
-        <div className="max-w-4xl mx-auto px-6 lg:px-16">
-          <h2 className="text-3xl font-bold mb-6 text-center" style={{ color: 'var(--gray-900)' }}>
-            Our Story
-          </h2>
-          <div className="space-y-6 text-lg" style={{ color: 'var(--gray-700)' }}>
-            <p>
-              Founded in 2009, Al Soadaa Import & Export Company has grown to become one of Egypt's leading agricultural export companies. What started as a small family business with a passion for quality has evolved into a trusted partner for importers and distributors across 50+ countries.
-            </p>
-            <p>
-              Our journey began in the fertile lands of the Nile Delta, where we work directly with local farmers to ensure the highest quality produce. Through sustainable farming practices and modern agricultural techniques, we've built a reputation for delivering fresh, premium Egyptian fruits and vegetables to markets worldwide.
-            </p>
-            <p>
-              Today, we export over 1,000 containers annually, maintaining the same commitment to quality and customer satisfaction that defined our first shipment. Every product that leaves our facilities meets rigorous international standards, backed by ISO 9001 and Global G.A.P certifications.
-            </p>
+      {/* Dynamic Content from Sanity */}
+      {t.content && (
+        <div className="py-16">
+          <div className="max-w-4xl mx-auto px-6 lg:px-16">
+            <PortableText value={t.content} />
           </div>
         </div>
-      </div>
+      )}
 
       {/* Mission & Values */}
       <div className="py-16" style={{ backgroundColor: 'var(--gray-50)' }}>
         <div className="max-w-7xl mx-auto px-6 lg:px-16">
           <h2 className="text-3xl font-bold mb-12 text-center" style={{ color: 'var(--gray-900)' }}>
-            Our Mission & Values
+            {t.ourMissionAndValues}
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -88,10 +97,10 @@ export function AboutPage() {
                 <Award className="w-8 h-8" style={{ color: 'var(--citrus-orange)' }} />
               </div>
               <h3 className="text-xl font-semibold mb-3" style={{ color: 'var(--gray-900)' }}>
-                Quality First
+                {t.qualityFirst}
               </h3>
               <p style={{ color: 'var(--gray-600)' }}>
-                We never compromise on quality. Every product undergoes rigorous inspection to meet international standards.
+                {t.qualityFirstDesc}
               </p>
             </Card>
 
@@ -100,10 +109,10 @@ export function AboutPage() {
                 <Globe className="w-8 h-8" style={{ color: 'var(--trust-blue)' }} />
               </div>
               <h3 className="text-xl font-semibold mb-3" style={{ color: 'var(--gray-900)' }}>
-                Global Reach
+                {t.globalReach}
               </h3>
               <p style={{ color: 'var(--gray-600)' }}>
-                Serving customers across Europe, Asia, and the Middle East with reliable logistics and timely delivery.
+                {t.globalReachDesc}
               </p>
             </Card>
 
@@ -112,10 +121,10 @@ export function AboutPage() {
                 <Leaf className="w-8 h-8" style={{ color: 'var(--fresh-green)' }} />
               </div>
               <h3 className="text-xl font-semibold mb-3" style={{ color: 'var(--gray-900)' }}>
-                Sustainability
+                {t.sustainability}
               </h3>
               <p style={{ color: 'var(--gray-600)' }}>
-                We promote sustainable farming practices that protect the environment for future generations.
+                {t.sustainabilityDesc}
               </p>
             </Card>
 
@@ -124,10 +133,10 @@ export function AboutPage() {
                 <Users className="w-8 h-8" style={{ color: 'var(--grape-purple)' }} />
               </div>
               <h3 className="text-xl font-semibold mb-3" style={{ color: 'var(--gray-900)' }}>
-                Partnership
+                {t.partnership}
               </h3>
               <p style={{ color: 'var(--gray-600)' }}>
-                We build long-term relationships with farmers, ensuring fair prices and sustainable livelihoods.
+                {t.partnershipDesc}
               </p>
             </Card>
 
@@ -136,10 +145,10 @@ export function AboutPage() {
                 <TrendingUp className="w-8 h-8" style={{ color: 'var(--berry-red)' }} />
               </div>
               <h3 className="text-xl font-semibold mb-3" style={{ color: 'var(--gray-900)' }}>
-                Innovation
+                {t.innovation}
               </h3>
               <p style={{ color: 'var(--gray-600)' }}>
-                Continuously improving our processes and adopting new technologies to serve you better.
+                {t.innovationDesc}
               </p>
             </Card>
 
@@ -148,10 +157,10 @@ export function AboutPage() {
                 <Shield className="w-8 h-8" style={{ color: 'var(--lemon-yellow-active)' }} />
               </div>
               <h3 className="text-xl font-semibold mb-3" style={{ color: 'var(--gray-900)' }}>
-                Trust & Reliability
+                {t.trustAndReliability}
               </h3>
               <p style={{ color: 'var(--gray-600)' }}>
-                Transparency in all our dealings and consistent delivery on our promises.
+                {t.trustAndReliabilityDesc}
               </p>
             </Card>
           </div>
@@ -162,11 +171,15 @@ export function AboutPage() {
       <div className="py-16">
         <div className="max-w-7xl mx-auto px-6 lg:px-16">
           <h2 className="text-3xl font-bold mb-12 text-center" style={{ color: 'var(--gray-900)' }}>
-            Our Certifications
+            {t.ourCertifications}
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {certifications.map((cert) => (
+            {[
+              { name: 'ISO 9001', description: t.iso9001Desc, icon: '🏆' },
+              { name: 'Global G.A.P', description: t.globalGapDesc, icon: '🌱' },
+              { name: 'HACCP', description: t.haccpDesc, icon: '✓' },
+            ].map((cert) => (
               <Card key={cert.name} className="p-8 text-center">
                 <div className="text-6xl mb-4">{cert.icon}</div>
                 <h3 className="text-2xl font-bold mb-4" style={{ color: 'var(--gray-900)' }}>
@@ -185,17 +198,17 @@ export function AboutPage() {
       <div className="py-16" style={{ backgroundColor: 'var(--gray-50)' }}>
         <div className="max-w-4xl mx-auto px-6 lg:px-16">
           <h2 className="text-3xl font-bold mb-12 text-center" style={{ color: 'var(--gray-900)' }}>
-            Our Journey
+            {t.ourJourney}
           </h2>
 
           <div className="space-y-8">
             {[
-              { year: '2009', title: 'Company Founded', description: 'Al Soadaa Export begins operations with a focus on citrus fruits.' },
-              { year: '2012', title: 'ISO 9001 Certification', description: 'Achieved ISO 9001 certification, establishing quality management systems.' },
-              { year: '2015', title: 'Global G.A.P Certified', description: 'Obtained Global G.A.P certification for sustainable agricultural practices.' },
-              { year: '2018', title: 'Expanded Product Range', description: 'Added vegetables and pomegranates to our export portfolio.' },
-              { year: '2021', title: '50 Countries Milestone', description: 'Reached the milestone of exporting to 50+ countries worldwide.' },
-              { year: '2025', title: 'Digital Transformation', description: 'Launched modern website and digital platform for better customer service.' },
+              { year: '2009', title: t.journey2009Title, description: t.journey2009Desc },
+              { year: '2012', title: t.journey2012Title, description: t.journey2012Desc },
+              { year: '2015', title: t.journey2015Title, description: t.journey2015Desc },
+              { year: '2018', title: t.journey2018Title, description: t.journey2018Desc },
+              { year: '2021', title: t.journey2021Title, description: t.journey2021Desc },
+              { year: '2025', title: t.journey2025Title, description: t.journey2025Desc },
             ].map((milestone, index) => (
               <div key={milestone.year} className="flex gap-6">
                 <div className="flex flex-col items-center">
